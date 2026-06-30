@@ -1,0 +1,909 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Pixabay API (Unofficial OpenAPI Spec)",
+    "summary": "RESTful API to search and retrieve royalty-free images, videos, music, and sound effects from Pixabay.",
+    "description": "Unofficial OpenAPI 3.1 specification for the Pixabay API, reverse-engineered from the public documentation at https://pixabay.com/api/docs/.\n\n## Overview\nPixabay API is a RESTful interface for searching and retrieving royalty-free images and videos released under the Pixabay Content License.\n\n## Authentication\nAll requests require an API key passed as the `key` query parameter. Get your key at https://pixabay.com/accounts/register/.\n\n## Rate Limit\nUp to 100 requests per 60 seconds (per API key). Response headers:\n- `X-RateLimit-Limit`\n- `X-RateLimit-Remaining`\n- `X-RateLimit-Reset` (seconds until window resets)\n\nResponses must be cached for 24 hours. Systematic mass downloads are not allowed.\n\n## Hotlinking\nPermanent hotlinking of image URLs is not allowed. Download images to your own server. Videos may be embedded directly.\n\n## Encoding\nJSON responses, UTF-8, case-sensitive keys. Keys may appear in any order and new keys may be added at any time.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Pixabay",
+      "url": "https://pixabay.com/service/about/api/",
+      "email": "info@pixabay.com"
+    },
+    "license": {
+      "name": "Pixabay Content License",
+      "url": "https://pixabay.com/service/license-summary/"
+    },
+    "termsOfService": "https://pixabay.com/service/terms/"
+  },
+  "externalDocs": {
+    "description": "Official Pixabay API Documentation",
+    "url": "https://pixabay.com/api/docs/"
+  },
+  "servers": [
+    {
+      "url": "https://pixabay.com",
+      "description": "Production"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Images",
+      "description": "Search and retrieve royalty-free images, illustrations, and vectors."
+    },
+    {
+      "name": "Videos",
+      "description": "Search and retrieve royalty-free videos and animations."
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/api/": {
+      "get": {
+        "tags": [
+          "Images"
+        ],
+        "summary": "Search images",
+        "description": "Search royalty-free photos, illustrations, and vectors.",
+        "operationId": "searchImages",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Key"
+          },
+          {
+            "$ref": "#/components/parameters/Q"
+          },
+          {
+            "$ref": "#/components/parameters/Lang"
+          },
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "name": "image_type",
+            "in": "query",
+            "required": false,
+            "description": "Filter results by image type.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "all",
+                "photo",
+                "illustration",
+                "vector"
+              ],
+              "default": "all"
+            }
+          },
+          {
+            "name": "orientation",
+            "in": "query",
+            "required": false,
+            "description": "Image orientation.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "all",
+                "horizontal",
+                "vertical"
+              ],
+              "default": "all"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Category"
+          },
+          {
+            "$ref": "#/components/parameters/MinWidth"
+          },
+          {
+            "$ref": "#/components/parameters/MinHeight"
+          },
+          {
+            "name": "colors",
+            "in": "query",
+            "required": false,
+            "description": "Filter images by color properties. Comma-separated list for multiple values.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "grayscale",
+                "transparent",
+                "red",
+                "orange",
+                "yellow",
+                "green",
+                "turquoise",
+                "blue",
+                "lilac",
+                "pink",
+                "white",
+                "gray",
+                "black",
+                "brown"
+              ]
+            }
+          },
+          {
+            "$ref": "#/components/parameters/EditorsChoice"
+          },
+          {
+            "$ref": "#/components/parameters/Safesearch"
+          },
+          {
+            "$ref": "#/components/parameters/Order"
+          },
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/PerPage"
+          },
+          {
+            "$ref": "#/components/parameters/Callback"
+          },
+          {
+            "$ref": "#/components/parameters/Pretty"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful search.",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "schema": {
+                  "type": "integer"
+                },
+                "description": "Max requests per 60 seconds."
+              },
+              "X-RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Reset": {
+                "schema": {
+                  "type": "integer"
+                },
+                "description": "Seconds until window resets."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageSearchResponse"
+                },
+                "example": {
+                  "total": 4692,
+                  "totalHits": 500,
+                  "hits": [
+                    {
+                      "id": 195893,
+                      "pageURL": "https://pixabay.com/en/blossom-bloom-flower-195893/",
+                      "type": "photo",
+                      "tags": "blossom, bloom, flower",
+                      "previewURL": "https://cdn.pixabay.com/photo/2013/10/15/09/12/flower-195893_150.jpg",
+                      "previewWidth": 150,
+                      "previewHeight": 84,
+                      "webformatURL": "https://pixabay.com/get/35bbf209e13e39d2_640.jpg",
+                      "webformatWidth": 640,
+                      "webformatHeight": 360,
+                      "largeImageURL": "https://pixabay.com/get/ed6a99fd0a76647_1280.jpg",
+                      "imageWidth": 4000,
+                      "imageHeight": 2250,
+                      "imageSize": 4731420,
+                      "views": 7671,
+                      "downloads": 6439,
+                      "likes": 5,
+                      "comments": 2,
+                      "user_id": 48777,
+                      "user": "Josch13",
+                      "userImageURL": "https://cdn.pixabay.com/user/2013/11/05/02-10-23-764_250x250.jpg"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (e.g. invalid parameter).",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "API rate limit exceeded.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": "API rate limit exceeded"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/videos/": {
+      "get": {
+        "tags": [
+          "Videos"
+        ],
+        "summary": "Search videos",
+        "description": "Search royalty-free videos and animations.",
+        "operationId": "searchVideos",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Key"
+          },
+          {
+            "$ref": "#/components/parameters/Q"
+          },
+          {
+            "$ref": "#/components/parameters/Lang"
+          },
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "name": "video_type",
+            "in": "query",
+            "required": false,
+            "description": "Filter results by video type.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "all",
+                "film",
+                "animation"
+              ],
+              "default": "all"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Category"
+          },
+          {
+            "$ref": "#/components/parameters/MinWidth"
+          },
+          {
+            "$ref": "#/components/parameters/MinHeight"
+          },
+          {
+            "$ref": "#/components/parameters/EditorsChoice"
+          },
+          {
+            "$ref": "#/components/parameters/Safesearch"
+          },
+          {
+            "$ref": "#/components/parameters/Order"
+          },
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/PerPage"
+          },
+          {
+            "$ref": "#/components/parameters/Callback"
+          },
+          {
+            "$ref": "#/components/parameters/Pretty"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful search.",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-RateLimit-Reset": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoSearchResponse"
+                },
+                "example": {
+                  "total": 42,
+                  "totalHits": 42,
+                  "hits": [
+                    {
+                      "id": 125,
+                      "pageURL": "https://pixabay.com/videos/id-125/",
+                      "type": "film",
+                      "tags": "flowers, yellow, blossom",
+                      "duration": 12,
+                      "videos": {
+                        "large": {
+                          "url": "https://cdn.pixabay.com/video/2015/08/08/125-135736646_large.mp4",
+                          "width": 1920,
+                          "height": 1080,
+                          "size": 6615235,
+                          "thumbnail": "https://cdn.pixabay.com/video/2015/08/08/125-135736646_large.jpg"
+                        },
+                        "medium": {
+                          "url": "https://cdn.pixabay.com/video/2015/08/08/125-135736646_medium.mp4",
+                          "width": 1280,
+                          "height": 720,
+                          "size": 3562083,
+                          "thumbnail": "https://cdn.pixabay.com/video/2015/08/08/125-135736646_medium.jpg"
+                        },
+                        "small": {
+                          "url": "https://cdn.pixabay.com/video/2015/08/08/125-135736646_small.mp4",
+                          "width": 640,
+                          "height": 360,
+                          "size": 1030736,
+                          "thumbnail": "https://cdn.pixabay.com/video/2015/08/08/125-135736646_small.jpg"
+                        },
+                        "tiny": {
+                          "url": "https://cdn.pixabay.com/video/2015/08/08/125-135736646_tiny.mp4",
+                          "width": 480,
+                          "height": 270,
+                          "size": 426799,
+                          "thumbnail": "https://cdn.pixabay.com/video/2015/08/08/125-135736646_tiny.jpg"
+                        }
+                      },
+                      "views": 4462,
+                      "downloads": 1464,
+                      "likes": 18,
+                      "comments": 0,
+                      "user_id": 1281706,
+                      "user": "Coverr-Free-Footage",
+                      "userImageURL": "https://cdn.pixabay.com/user/2015/10/16/09-28-45-303_250x250.png"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "API rate limit exceeded.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": "API rate limit exceeded"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "key",
+        "description": "Pixabay API key. Register at https://pixabay.com/accounts/register/."
+      }
+    },
+    "parameters": {
+      "Key": {
+        "name": "key",
+        "in": "query",
+        "required": true,
+        "description": "Your Pixabay API key.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Q": {
+        "name": "q",
+        "in": "query",
+        "required": false,
+        "description": "URL-encoded search term. If omitted, all results are returned. Max 100 characters. Example: `yellow+flower`.",
+        "schema": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "example": "yellow+flower"
+      },
+      "Lang": {
+        "name": "lang",
+        "in": "query",
+        "required": false,
+        "description": "Language code of the language to search in.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "cs",
+            "da",
+            "de",
+            "en",
+            "es",
+            "fr",
+            "id",
+            "it",
+            "hu",
+            "nl",
+            "no",
+            "pl",
+            "pt",
+            "ro",
+            "sk",
+            "fi",
+            "sv",
+            "tr",
+            "vi",
+            "th",
+            "bg",
+            "ru",
+            "el",
+            "ja",
+            "ko",
+            "zh"
+          ],
+          "default": "en"
+        }
+      },
+      "Id": {
+        "name": "id",
+        "in": "query",
+        "required": false,
+        "description": "Retrieve individual items by ID.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Category": {
+        "name": "category",
+        "in": "query",
+        "required": false,
+        "description": "Filter results by category.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "backgrounds",
+            "fashion",
+            "nature",
+            "science",
+            "education",
+            "feelings",
+            "health",
+            "people",
+            "religion",
+            "places",
+            "animals",
+            "industry",
+            "computer",
+            "food",
+            "sports",
+            "transportation",
+            "travel",
+            "buildings",
+            "business",
+            "music"
+          ]
+        }
+      },
+      "MinWidth": {
+        "name": "min_width",
+        "in": "query",
+        "required": false,
+        "description": "Minimum width in pixels.",
+        "schema": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        }
+      },
+      "MinHeight": {
+        "name": "min_height",
+        "in": "query",
+        "required": false,
+        "description": "Minimum height in pixels.",
+        "schema": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        }
+      },
+      "EditorsChoice": {
+        "name": "editors_choice",
+        "in": "query",
+        "required": false,
+        "description": "Select items that have received an Editor's Choice award.",
+        "schema": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "Safesearch": {
+        "name": "safesearch",
+        "in": "query",
+        "required": false,
+        "description": "Only return results suitable for all ages.",
+        "schema": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "Order": {
+        "name": "order",
+        "in": "query",
+        "required": false,
+        "description": "How results should be ordered.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "popular",
+            "latest"
+          ],
+          "default": "popular"
+        }
+      },
+      "Page": {
+        "name": "page",
+        "in": "query",
+        "required": false,
+        "description": "Pagination page number.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        }
+      },
+      "PerPage": {
+        "name": "per_page",
+        "in": "query",
+        "required": false,
+        "description": "Number of results per page.",
+        "schema": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 200,
+          "default": 20
+        }
+      },
+      "Callback": {
+        "name": "callback",
+        "in": "query",
+        "required": false,
+        "description": "JSONP callback function name.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Pretty": {
+        "name": "pretty",
+        "in": "query",
+        "required": false,
+        "description": "Indent JSON output. Not for production use.",
+        "schema": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "string",
+        "description": "Plain-text error message returned with non-2xx HTTP status codes (e.g. 'API rate limit exceeded')."
+      },
+      "ImageHit": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique image identifier."
+          },
+          "pageURL": {
+            "type": "string",
+            "format": "uri",
+            "description": "Source page on Pixabay."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "photo",
+              "illustration",
+              "vector"
+            ]
+          },
+          "tags": {
+            "type": "string",
+            "description": "Comma-separated tags."
+          },
+          "previewURL": {
+            "type": "string",
+            "format": "uri"
+          },
+          "previewWidth": {
+            "type": "integer"
+          },
+          "previewHeight": {
+            "type": "integer"
+          },
+          "webformatURL": {
+            "type": "string",
+            "format": "uri",
+            "description": "Medium-sized image (max 640px). Valid for 24h."
+          },
+          "webformatWidth": {
+            "type": "integer"
+          },
+          "webformatHeight": {
+            "type": "integer"
+          },
+          "largeImageURL": {
+            "type": "string",
+            "format": "uri",
+            "description": "Scaled image (max 1280px)."
+          },
+          "fullHDURL": {
+            "type": "string",
+            "format": "uri",
+            "description": "Full HD (max 1920px). Requires full API access."
+          },
+          "imageURL": {
+            "type": "string",
+            "format": "uri",
+            "description": "Original image. Requires full API access."
+          },
+          "imageWidth": {
+            "type": "integer"
+          },
+          "imageHeight": {
+            "type": "integer"
+          },
+          "imageSize": {
+            "type": "integer",
+            "description": "File size in bytes."
+          },
+          "views": {
+            "type": "integer"
+          },
+          "downloads": {
+            "type": "integer"
+          },
+          "likes": {
+            "type": "integer"
+          },
+          "comments": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "user": {
+            "type": "string"
+          },
+          "userImageURL": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "id",
+          "pageURL",
+          "type",
+          "tags",
+          "previewURL",
+          "previewWidth",
+          "previewHeight",
+          "webformatURL",
+          "webformatWidth",
+          "webformatHeight",
+          "largeImageURL",
+          "views",
+          "downloads",
+          "likes",
+          "comments",
+          "user_id",
+          "user"
+        ]
+      },
+      "ImageSearchResponse": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Total number of hits."
+          },
+          "totalHits": {
+            "type": "integer",
+            "description": "Number of images accessible through the API (max 500 per query)."
+          },
+          "hits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImageHit"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "totalHits",
+          "hits"
+        ]
+      },
+      "VideoRendition": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Append `?download=1` to force browser download."
+          },
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          },
+          "size": {
+            "type": "integer",
+            "description": "Approximate file size in bytes."
+          },
+          "thumbnail": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "url",
+          "width",
+          "height",
+          "size"
+        ]
+      },
+      "VideoHit": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique video identifier."
+          },
+          "pageURL": {
+            "type": "string",
+            "format": "uri"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "film",
+              "animation"
+            ]
+          },
+          "tags": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Duration in seconds."
+          },
+          "videos": {
+            "type": "object",
+            "properties": {
+              "large": {
+                "$ref": "#/components/schemas/VideoRendition"
+              },
+              "medium": {
+                "$ref": "#/components/schemas/VideoRendition"
+              },
+              "small": {
+                "$ref": "#/components/schemas/VideoRendition"
+              },
+              "tiny": {
+                "$ref": "#/components/schemas/VideoRendition"
+              }
+            }
+          },
+          "views": {
+            "type": "integer"
+          },
+          "downloads": {
+            "type": "integer"
+          },
+          "likes": {
+            "type": "integer"
+          },
+          "comments": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "user": {
+            "type": "string"
+          },
+          "userImageURL": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "id",
+          "pageURL",
+          "type",
+          "tags",
+          "duration",
+          "videos",
+          "views",
+          "downloads",
+          "likes",
+          "comments",
+          "user_id",
+          "user"
+        ]
+      },
+      "VideoSearchResponse": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "totalHits": {
+            "type": "integer"
+          },
+          "hits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VideoHit"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "totalHits",
+          "hits"
+        ]
+      }
+    }
+  }
+}
